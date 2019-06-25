@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Depployment
+kind: Deployment
 metadata:
   name: worker-app-deployment
   labels:
