@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db # as service name in compose file
+  labels:
+    app: demo-voting-app
+    name: postgres-svc
+
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: demo-voting-app
+    name: redis-pod
