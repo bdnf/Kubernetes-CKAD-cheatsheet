@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: voting-app-ingress
+spec:
+  rules:
+   - http:
+      paths:
+      - path: /vote
+        backend:
+          serviceName: voting-svc
+          servicePort: 80
+      - path: /result
+        backend:
+          serviceName: results-svc
+          servicePort: 80
