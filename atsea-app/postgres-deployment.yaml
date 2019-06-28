@@ -46,9 +46,17 @@ spec:
             - name: POSTGRES_DB
               value: atsea
             - name: POSTGRES_PASSWORD_FILE
-              valueFrom:
-                secretKeyRef:
-                  name: app-secrets
-                  key: postgres-password
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: app-secrets
+              #     key: postgres-password
+              volumeMounts:
+                - name: db-secret
+                  mountPath: "/run/secrets/postgres-password"
+                  readOnly: true
+          volumes:
+          - name: db-secret
+            secret:
+              secretName: postgres-password
           ports:
             - containerPort: 5432
