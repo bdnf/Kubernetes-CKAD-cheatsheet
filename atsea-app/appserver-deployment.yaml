@@ -48,9 +48,9 @@ spec:
             - containerPort: 5005
           volumeMounts:
             - name: db-secret
-              mountPath: "/run/secrets/postgres_password"
+              mountPath: "/run/secrets/postgres-password"
               readOnly: true
       volumes:
       - name: db-secret
         secret:
-          secretName: postgres_password
+          secretName: postgres-password
