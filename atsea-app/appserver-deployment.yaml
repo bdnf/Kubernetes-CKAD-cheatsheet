@@ -8,9 +8,11 @@ metadata:
     name: appserver
 spec:
   ports:
-    - port: 8008
-      targetPort: 8008
+    - port: 8080
+      name: ui
+      targetPort: 8080
     - port: 5005
+      name: otherPort
       targetPort: 5005
   selector:
     app: demo-atsea-app
@@ -48,7 +50,7 @@ spec:
             - name: db_secret
               mountPath: "/run/secrets/postgres_password"
               readOnly: true
-          volumes:
-          - name: db_secret
-            secret:
-              secretName: postgres_password
+      volumes:
+      - name: db_secret
+        secret:
+          secretName: postgres_password
