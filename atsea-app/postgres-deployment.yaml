@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: database #
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+    name: atsea-database
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: demo-atsea-app
+    name: database-pod
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: demo-atsea-app
+        name: database-pod
+  template:
+    # pod
+    metadata:
+      name: database-pod
+      labels:
+        app: demo-atsea-app
+        name: database-pod
+    spec:
+      containers:
+        - name: atsea_db
+          image: dockersamples/atsea_db
+          env:
+            - name: POSTGRES_USER
+              value: gordonuser
+            - name: POSTGRES_DB
+              value: atsea
+            - name: POSTGRES_PASSWORD_FILE
+              valueFrom:
+                secretKeyRef:
+                  name: postgress-pass
+                  key: postgres_password
+          ports:
+            - containerPort: 5432

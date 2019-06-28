@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appserver #
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+    name: appserver
+spec:
+  ports:
+    - port: 8008
+      targetPort: 8008
+    - port: 5005
+      targetPort: 5005
+  selector:
+    app: demo-atsea-app
+    name: appserver-pod
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appserver
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: demo-atsea-app
+        name: appserver-pod
+  template:
+    # pod
+    metadata:
+      name: appserver-pod
+      labels:
+        app: demo-atsea-app
+        name: appserver-pod
+    spec:
+      containers:
+        - name: atsea_app
+          image: dockersamples/atsea_app
+          ports:
+            - containerPort: 8080
+            - containerPort: 5005
+          volumeMounts:
+            - name: db_secret
+              mountPath: "/run/secrets/postgres_password"
+              readOnly: true
+          volumes:
+          - name: db_secret
+            secret:
+              secretName: postgres_password

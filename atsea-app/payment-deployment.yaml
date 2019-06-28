@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment_gateway #
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+    name: payment_gateway
+spec:
+  selector:
+    app: demo-atsea-app
+    name: payment-pod
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment_gateway
+  namespace: atsea
+  labels:
+    app: demo-atsea-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: demo-atsea-app
+        name: payment-pod
+  template:
+    # pod
+    metadata:
+      name: payment-pod
+      labels:
+        app: demo-atsea-app
+        name: payment-pod
+    spec:
+      containers:
+        - name: payment_gateway
+          image: dockersamples/atseasampleshopapp_payment_gateway
+      volumeMounts:
+        - name: token_secret
+          mountPath: "/run/secrets/payment_token"
+          readOnly: true
+      volumes:
+      - name: token_secret
+        secret:
+          secretName: payment_token
