@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: database #
+  name: database
   namespace: atsea
   labels:
     app: demo-atsea-app
@@ -38,7 +38,7 @@ spec:
         name: database-pod
     spec:
       containers:
-        - name: atsea_db
+        - name: atsea-db
           image: dockersamples/atsea_db
           env:
             - name: POSTGRES_USER

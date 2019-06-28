@@ -12,7 +12,7 @@ spec:
       name: ui
       targetPort: 8080
     - port: 5005
-      name: otherPort
+      name: other-port
       targetPort: 5005
   selector:
     app: demo-atsea-app
@@ -41,16 +41,16 @@ spec:
         name: appserver-pod
     spec:
       containers:
-        - name: atsea_app
+        - name: atsea-app
           image: dockersamples/atsea_app
           ports:
             - containerPort: 8080
             - containerPort: 5005
           volumeMounts:
-            - name: db_secret
+            - name: db-secret
               mountPath: "/run/secrets/postgres_password"
               readOnly: true
       volumes:
-      - name: db_secret
+      - name: db-secret
         secret:
           secretName: postgres_password
