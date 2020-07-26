@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # should match serviceName: in StatefulSet definition file
+  name: mysql-h 
+spec:
+  # requred to be None
+  clusterIP: None
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  
