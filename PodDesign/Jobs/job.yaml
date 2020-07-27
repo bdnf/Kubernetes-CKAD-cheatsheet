@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: throw-dice-job
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      completions: 3
+      # parallelism: 3 # run containers in parallel until completion
+      backoffLimit: 25 # This is so the job does not quit before it succeeds.
+      template:
+       spec:
+          containers:
+          -  image: kodekloud/throw-dice
+             name: throw-dice
+          restartPolicy: Never
