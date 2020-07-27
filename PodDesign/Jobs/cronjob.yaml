@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: throw-dice-job
+spec:
+  schedule: "30 21 * * *"
+  jobTemplate:
+    spec:
+      completions: 3
+      # parallelism: 3
+      backoffLimit: 25 # This is so the job does not quit before it succeeds.
+      template:
+        spec:
+          containers:
+          -  image: kodekloud/throw-dice
+             name: throw-dice
+          restartPolicy: Never

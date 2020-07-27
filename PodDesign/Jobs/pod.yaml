@@ -1,0 +1,12 @@
+# Pod that will throw a dice and
+# upon throwing 6 will exit with success code
+# Next, Job and CronJobs based on this definition will be created
+apiVersion: v1
+kind: Pod
+metadata:
+  name: throw-dice-pod
+spec:
+  containers:
+  -  image: kodekloud/throw-dice
+     name: throw-dice
+  restartPolicy: Never
