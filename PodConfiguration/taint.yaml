@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: bee
+  name: bee
+spec:
+  containers:
+  - image: busybox
+    name: worker
+    resources: {}
+  tolerations:
+    - key: "role"
+      operator: "Equal"
+      value: 'core-worker'
+      effect: "NoSchedule"
