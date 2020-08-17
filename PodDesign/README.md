@@ -10,7 +10,7 @@ kubectl get all --selector env=prod
 kubectl label pods my-pod new-label=awesome                      # Add a Label
 ```
 
-## Updating resources
+## Updating resources and Rollbacks
 ```
 kubectl set image deployment/frontend www=image:v2               # Rolling update "www" containers of "frontend" deployment, updating the image
 kubectl rollout history deployment/frontend                      # Check the history of deployments including the revision
@@ -18,6 +18,9 @@ kubectl rollout undo deployment/frontend                         # Rollback to t
 kubectl rollout undo deployment/frontend --to-revision=2         # Rollback to a specific revision
 kubectl rollout status -w deployment/frontend                    # Watch rolling update status of "frontend" deployment until completion
 kubectl rollout restart deployment/frontend                      # Rolling restart of the "frontend" deployment
+
+kubectl rollout pause deployment/frontend
+kubectl rollout resume deployment/frontend
 
 ```
 

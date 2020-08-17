@@ -3,15 +3,14 @@ kind: Job
 metadata:
   name: throw-dice-job
 spec:
-  schedule: "*/1 * * * *"
-  jobTemplate:
-    spec:
-      completions: 3
-      # parallelism: 3 # run containers in parallel until completion
-      backoffLimit: 25 # This is so the job does not quit before it succeeds.
-      template:
-       spec:
-          containers:
-          -  image: kodekloud/throw-dice
-             name: throw-dice
-          restartPolicy: Never
+  completions: 3
+  # parallelism: 3 # run containers in parallel until completion
+  activeDeadlineSeconds: 1800 #The maximum duration the job can run
+  backoffLimit: 6 # The number of retries for a job
+  ttlSecondsAfterFinished: 100 #cleanup the job after completion
+  template:
+   spec:
+      containers:
+      -  image: kodekloud/throw-dice
+         name: throw-dice
+      restartPolicy: Never

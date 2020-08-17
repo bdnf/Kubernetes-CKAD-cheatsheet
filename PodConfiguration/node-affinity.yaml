@@ -12,6 +12,9 @@ spec:
       labels:
         run: nginx
     spec:
+      # Simplest example may llok like having only nodeSelector
+      # nodeSelector:
+      #    kubernetes.io/hostname: node01
       containers:
       - image: nginx
         imagePullPolicy: Always
