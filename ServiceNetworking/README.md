@@ -1,3 +1,19 @@
+# Services
+
+Basic step to access a new service is to use to expose ports of previously created deployment.
+```
+kubectl expose deployment/nginx --port=80 --type=NodePort
+```
+This service used port 80 and generated a random port on all the nodes. A particular port and targetPort can also be passed during object creation to avoid random values.
+
+`kubectl get svc` command lists all the existing services.
+
+A bit more extended command may look like:
+```
+kubectl expose deployment/simple-webapp-deployment --port=8080 \
+    --target-port=8080 --type=NodePort --labels name=simple-webapp --name=webapp
+```
+
 # Service Types
 
 ## ClusterIP
@@ -84,73 +100,30 @@ spec:
 ```
 
 ## ExternalName
-A newer service is ExternalName, which is a bit different. It has no selectors, nor does it define ports or endpoints. It allows the return of an alias to an external service. The redirection happens at the DNS level, not via a proxy or forward. This object can be useful for services not yet brought into the Kubernetes cluster. A simple change of the type in the future would redirect traffic to the internal objects.
+A newer service is ExternalName, which is a bit different. It has no selectors, nor does it define ports or endpoints. It allows the return of an alias to an external service. The redirection happens at the DNS level, not via a proxy or forward. This object can be useful for services not yet brought into the Kubernetes cluster or for connecting to a remote database. Also one can use a service without selectors to direct the service to another service, in a different namespace or cluster. ExternalName returns a CNAME record and is handy when using a resource external to the cluster.
 
-The use of an ExternalName service, which is a special type of service without selectors, is to point to an external DNS server. Use of the service returns a CNAME record. Working with the ExternalName service is handy when using a resource external to the cluster, perhaps prior to full integration.
 ```
 spec:
   Type: ExternalName
   externalName: ext.db.example.com
 ```
 
-# CLI commands
+# Ingress Resources
 
-```
-# Create Service from CLI
+An ingress resource is an API object containing a list of rules matched against all incoming requests. Only HTTP rules are currently supported. In order for the controller to direct traffic to the backend, the HTTP request must match both the host and the path declared in the ingress.
 
-kubectl expose deployment/simple-webapp-deployment --port=8080 \
-    --target-port=8080 --type=NodePort --labels name=simple-webapp --name=webapp
-```
+Fore resources to forward traffic to other Deployment, first an ingress Controller should be created.
+Great examples are Nginx-ingress-controller, HAProxy, Traefik.
+
+Ingress controller manages ingress rules to route traffic to existing services.
+Ingress can be used for load balancing, fan out to services or name-based hosting. Another useful feature may be to expose low-numbered ports with help of Ingress Controllers.
+
 
 # Network Policies
+
+Pods become isolated by having a NetworkPolicy that selects them. Once there is any NetworkPolicy in a namespace selecting a particular pod, that pod will reject any connections that are not allowed by any NetworkPolicy. (Other pods in the namespace that are not selected by any NetworkPolicy will continue to accept all traffic).
+
 ```
 kubectl get networkpolicy
 ```
-
-```yaml
-# allow incoming to payroll from internal on port 8080
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: external-policy
-spec:
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          name: internal
-    ports:
-    - port: 8080
-      protocol: TCP
-  podSelector:
-    matchLabels:
-      name: payroll
-  policyTypes:
-  - Ingress
----
-# Allow outgoing from internal to payroll and mysql only
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: internal-policy
-spec:
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          name: payroll
-    ports:
-    - port: 8080
-      protocol: TCP
-  - to:
-    - podSelector:
-        matchLabels:
-         name: mysql
-    ports:
-    - port: 3306
-  podSelector:
-    matchLabels:
-      name: internal
-  policyTypes:
-  - Egress
-```
+More detailed example can be found in: `network-policy.yaml`
