@@ -33,5 +33,36 @@ kubectl taint nodes worker role=core-worker:NoSchedule
 # Remove taint from master to allow scheduling
 kubectl taint nodes master node-role.kubernetes.io/master:NoSchedule-
 
-kubectl label node worker color=red
+# add labels to the node
+kubectl label node worker type=data-processor
 ```
+
+Taints can be handled by adding tolerations to each pod. Taints are triple of values: `key`=`value`:`effect`.
+Effect can be of type `NoSchedule`, `NoExecute`, `PreferNoSchedule`
+```
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "key"
+    operator: "Equal"
+    value: "value"
+    effect: "NoSchedule"
+```
+`NoSchedule` effect means that no pod will be able to schedule onto the node unless it has a matching toleration.
+
+If effect `NoExecute` is added to a node, then any pods that do not tolerate the taint will be evicted immediately, and pods that do tolerate the taint will never be evicted. However, a toleration with NoExecute effect can specify an optional tolerationSeconds field that dictates how long the pod will stay bound to the node after the taint is added.
+
+`PreferNoSchedule` - is a "soft" version of `NoSchedule`. The system will try to avoid placing a pod that does not tolerate the taint on the node, but it is not required. 
+
+Node labels can be used to assign pods directly to specific node (assuming that notolerations are present).
+```
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeSelector:
+    type: data-processor
+```
+Or node labels and tainst can be combined to add more fine-grained scheduling control.
