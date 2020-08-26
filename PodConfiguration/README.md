@@ -65,4 +65,26 @@ spec:
   nodeSelector:
     type: data-processor
 ```
-Or node labels and tainst can be combined to add more fine-grained scheduling control.
+Or node labels and taints can be combined to add more fine-grained scheduling control.
+
+To prevent from other pods to be scheduled on the node of interest, a combination ot Taints/Tolerations and NodeAffinity is used.
+This also ensures that current pod won't be placed on some other node without this particular toleration specified. Pod will be placed on the node that exactly matches both affinity and toleration rules.
+```
+    spec:
+      containers: 
+         ...
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - core-worker
+      tolerations:
+      - key: "role"
+        operator: "Equal"
+        value: "core-worker"
+        effect: "NoSchedule"
+```
