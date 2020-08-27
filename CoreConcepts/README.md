@@ -1,5 +1,25 @@
 # Common Concepts and Commands
 
+# Basic commands
+```
+# creat3 Pod and Service
+kubectl run pod --image=nginx --port=80 --expose
+
+# create Deployment and Service
+kubectl create deployment nginx --image=nginx --labels=app=webserver --namespace=dev
+kubectl expose deployment nginx --name=nginx-service --port=80 --serviceType=ClusterIP
+
+# create Service seprately. labels won't be inherited, but nodePort can be specified
+kubectl create service nodeport nginx --tcp=80:80 --node-port=30080
+
+kubectl scale deployment nginx --replicas=3
+
+kubectl set image deployment nginx nginx=nginx:alpine
+
+# add labels
+kubectl label pods my-pod new-label=awesome
+```
+
 # Common CLI Commands
 ```
 # Describe is a higher level printing operation that may aggregate data from other sources
