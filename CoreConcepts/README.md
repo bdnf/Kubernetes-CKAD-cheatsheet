@@ -2,11 +2,14 @@
 
 # Basic commands
 ```
-# creat3 Pod and Service
+# create Pod 
+kubectl run pod --image=nginx --port=80
+# create Pod with Service
+kubectl run nginx --image=nginx --restart=Never --port=80 --expose --dry-run -o yaml --labels app=dev,tier=web
 kubectl run pod --image=nginx --port=80 --expose
 
 # create Deployment and Service
-kubectl create deployment nginx --image=nginx --labels=app=webserver --namespace=dev
+kubectl create deployment nginx --image=nginx --namespace=dev
 kubectl expose deployment nginx --name=nginx-service --port=80 --serviceType=ClusterIP
 
 # create Service seprately. labels won't be inherited, but nodePort can be specified
