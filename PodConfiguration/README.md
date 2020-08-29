@@ -1,3 +1,11 @@
+## Running commands in a container
+
+Run echo command on container start.
+Additioanlly ENV variables can be set in CLI command
+```
+kubectl run nginx --image=nginx --restart=Never --port=80 --dry-run -o yaml --labels app=dev,tier=web --env="HOST"="$(hostname)" --command -- sh echo "Hello from Kubernetes Cluster"
+```
+
 ## Security Context
 
 To specify security settings for a Pod, include the securityContext field in the Pod specification.
