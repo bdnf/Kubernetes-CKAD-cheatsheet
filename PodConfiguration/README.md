@@ -6,6 +6,88 @@ Additioanlly ENV variables can be set in CLI command
 kubectl run nginx --image=nginx --restart=Never --port=80 --dry-run -o yaml --labels app=dev,tier=web --env="HOST"="$(hostname)" --command -- sh echo "Hello from Kubernetes Cluster"
 ```
 
+## Create a ConfigMap
+
+```
+kubectl create configmap config --from-literal=TIME_FREQ=10
+
+kubectl create configmap config --from-file=app.properties
+
+kubectl create configmap config --from-env-file=conf.env
+```
+Use configuration create from a Pod with:
+```
+   image: busybox
+   env:
+    - name: TIME_FREQ  # name of the ENV to be created in a Pod
+      valueFrom:
+        configMapKeyRef:
+          name: config # name of ConfigMap
+          key: TIME_FREQ # name of the ENV in config map
+```
+Inject all the defined variables in a ConfigMap at once into the Pod with:
+```
+   image: busybox
+   envFrom: 
+   - configMapRef:
+        name: config
+```
+Config map can be used to inject config file as a volume.
+This is useful for example when ConfigMap is created from file (`kubectl create configmap config --from-file=app.properties`). 
+The file then will be available inside of a container inside a specified by `mountPath` path,
+and can be easily references like `/etc/config/app.properties` using example below.
+```
+spec:
+  containers:
+  - name: nginx
+    ...
+    volumeMounths:
+    - name: myvolume # should match name below
+      mouthPath: /etc/config
+  volumes:
+  - name: myvolume
+    configMap:
+      name: config
+```
+
+## Secrets
+Secrets are similar somewhat to ConfigMaps but with the difference that they store sensitive values in Base64 format. Secrets optionally can be encrypted using third part tools.
+
+```
+kubectl create secret generic app-secret --from-literal=TIME_FREQ=10
+
+kubectl create secret generic app-secret --from-file=app.secrets
+
+kubectl create secret generic app-private-key --from-file=client-key=${LOCAL_PATH}/client.key
+```
+
+Inject into a Pod as an environmental variable or a volume:
+```
+   image: busybox
+   env: 
+    - name: frequecy 
+      valueFrom:
+        secretKeyRef: 
+          name: app-secret
+          key: TIME_FREQ
+```
+
+Using Secrets as from a Volume example:
+```
+spec:
+  containers:
+  - name: flask-app
+    ...
+    volumeMounts:
+    - mountPath: /etc/key   # key will be available in file /etc/key/client-key, as --from-file=client-key=
+      readOnly: true
+      name: private-key
+  volumes:
+  - name: private-key
+    secret:
+      secretName: app-private-key
+```
+
 ## Security Context
 
 To specify security settings for a Pod, include the securityContext field in the Pod specification.
