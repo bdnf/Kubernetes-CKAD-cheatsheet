@@ -127,3 +127,25 @@ Pods become isolated by having a NetworkPolicy that selects them. Once there is 
 kubectl get networkpolicy
 ```
 More detailed example can be found in: `network-policy.yaml`
+
+Simple Network Policy that is applied on `redis` pods and allow access from `dev` pods only may look like the following:
+```
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: redis-access
+spec:
+  # policy is applied on these pods
+  podSelector:
+    matchLabels:
+      app: redis
+  ingress: # allow ingress traffic from pods with specific labels only
+  - from:
+    - podSelector: 
+        matchLabels: 
+          environment: dev
+    # [Optional] allow access for them only on this port
+    ports:
+    - protocol: TCP
+      port: 6379
+```
