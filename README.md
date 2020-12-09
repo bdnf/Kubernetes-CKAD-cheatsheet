@@ -1,4 +1,4 @@
-# Kubernetes examples and CKAD Exercises
+# Kubernetes CKAD Exam Cheatsheet
 
 A set of exercises and examples that helped me to prepare for [Certified Kubernetes Application Developer](https://www.cncf.io/certification/ckad/) exam, offered by the Cloud Native Computing Foundation.
 Repository contains a set of examples organized by topics. Please navigate to the corresponding folder to learn more.
